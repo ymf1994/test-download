@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+	<script type="text/javascript" src="jquery.min.js"></script>
+</head>
+<body>
+	<input id="downloadBtn" type="button" value="来啊下载啊" data-url="https://public-oss.kaike.la/dmhub/dmhub/1699037df013821/1552902774513.txt" />
+    <script>
+	$(function(){
+        var downloadByAjax = function(fileName, url) {
+			var url= "https://public-oss.kaike.la/dmhub/dmhub/1699037df013821/1552902774513.txt"
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);        // 也可以使用POST方式，根据接口
+			xhr.responseType = "blob";    // 返回类型blob
+			// 定义请求完成的处理函数，请求前也可以增加加载框/禁用下载按钮逻辑
+			xhr.onload = function () {
+				// 请求完成
+				if (this.status === 200) {
+					// 返回200
+					var blob = this.response;
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						// 转换完成，创建一个a标签用于下载
+						var a = document.createElement('a');
+						a.download = fileName;
+						a.href = e.target.result;
+						a.target = "_new";
+						$("body").append(a);    // 修复firefox中无法触发click
+						a.click();
+						$(a).remove();
+					};
+					reader.readAsDataURL(blob);    // 转换为base64，可以直接放入a表情href
+				}
+			};
+			// 发送ajax请求
+			xhr.send();
+		};
+		
+		$('#downloadBtn').on('click', function() {
+			console.log($(this).attr('data-url'));
+			downloadByAjax("aa", $(this).attr('data-url'));
+		});
+	});
+    </script>
+</body>
+</html>
