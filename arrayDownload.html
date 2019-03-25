@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="./jquery.min.js"></script>
+</head>
+
+<body>
+    <input id="downloadBtn" type="button" value="arr下载啊" />
+    <script>
+        $(function () {
+            $('#downloadBtn').click(function () {
+                $.ajax({
+                    url: './data.json',
+                    method: 'get',
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res.resultObject.uidList);
+                        var arr = res.resultObject.uidList;
+                        var str = arr.join('\r\n');
+                        var blob = new Blob([str]);
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            // 转换完成，创建一个a标签用于下载
+                            var a = document.createElement('a');
+                            a.download = 'sss.txt';
+                            a.href = e.target.result;
+                            a.target = "_new";
+                            $("body").append(a); // 修复firefox中无法触发click
+                            a.click();
+                            $(a).remove();
+                        };
+                        reader.readAsDataURL(blob)
+                    }
+                })
+            })
+        });
+    </script>
+</body>
+
+</html>
